@@ -427,9 +427,9 @@ def main():
             outputs = [py_pickle_cookie, cookies, *customize_btns.values(), *predefined_btns.values()], _js=js_code_for_persistent_cookie_init)
         demo.load(None, inputs=[dark_mode], outputs=None, _js="""(dark_mode)=>{apply_cookie_for_checkbox(dark_mode);}""")    # 配置暗色主题或亮色主题
         demo.load(None, inputs=[gr.Textbox(LAYOUT, visible=False)], outputs=None, _js='(LAYOUT)=>{GptAcademicJavaScriptInit(LAYOUT);}')
-
-    url_params = gr.JSON({}, visible=False, label="URL Params")
-    demo.load(fn=initialize_from_url_params, inputs=[url_params], outputs=[], _js=get_window_url_params)
+        
+        url_params = gr.JSON({}, visible=False, label="URL Params")
+        demo.load(fn=initialize_from_url_params, inputs=[url_params], outputs=[], _js=get_window_url_params)
 
     # gradio的inbrowser触发不太稳定，回滚代码到原始的浏览器打开函数
     def run_delayed_tasks():
