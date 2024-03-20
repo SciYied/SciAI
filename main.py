@@ -429,7 +429,7 @@ def main():
         demo.load(None, inputs=[gr.Textbox(LAYOUT, visible=False)], outputs=None, _js='(LAYOUT)=>{GptAcademicJavaScriptInit(LAYOUT);}')
 
     url_params = gr.JSON({}, visible=False, label="URL Params")
-demo.load(fn=initialize_from_url_params, inputs=[url_params], outputs=[], _js=get_window_url_params)
+    demo.load(fn=initialize_from_url_params, inputs=[url_params], outputs=[], _js=get_window_url_params)
 
     # gradio的inbrowser触发不太稳定，回滚代码到原始的浏览器打开函数
     def run_delayed_tasks():
