@@ -13,6 +13,43 @@ help_menu_description = \
 </br></br>如何语音对话: 请阅读Wiki
 </br></br>如何临时更换API_KEY: 在输入区输入临时API_KEY后提交（网页刷新后失效）"""
 
+get_window_url_params = """
+    function() {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+        return token;
+    }
+"""
+def initialize_from_url_params(url_params):
+    global should_execute_predict
+    # 这里处理 URL 参数，并设置 should_execute_predict
+    # 示例：根据某个参数来设置
+    should_execute_predict = False
+    utoken=url_params
+    if utoken:
+        api_url = f"https://ai.linkagi.top/api/demo/test6?token={utoken}"
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            should_execute_predict = True
+            print("识别成功")
+        else:
+            print("API 请求失败，状态码:", response.status_code)
+    
+        #try:
+            #response = requests.get(api_url)
+            #if response.status_code == 200:
+                #should_execute_predict = True
+                #print("识别成功")
+            #else:
+                #print("API 请求失败，状态码:", response.status_code)
+        #except Exception as e:
+            #print("API 请求发生错误:", str(e))
+    if should_execute_predict != True:
+        print("识别失败")
+
+
+
+
 def main():
     import gradio as gr
     if gr.__version__ not in ['3.32.8']:
@@ -276,7 +313,20 @@ def main():
         # 整理反复出现的控件句柄组合
         input_combo = [cookies, max_length_sl, md_dropdown, txt, txt2, top_p, temperature, chatbot, history, system_prompt, plugin_advanced_arg]
         output_combo = [cookies, chatbot, history, status]
-        predict_args = dict(fn=ArgsGeneralWrapper(predict), inputs=[*input_combo, gr.State(True)], outputs=output_combo)
+
+        wrapped_predict = ArgsGeneralWrapper(predict)
+        def conditional_predict(*args, **kwargs):
+            global should_execute_predict
+            if should_execute_predict:
+                # 当条件满足时，直接predict
+                yield from predict(*args, **kwargs)
+            else:
+                # 当条件不满足时，返回与 output_combo 长度相同的 None 列表
+                print("没有这个用户")
+                return
+        predict_args = dict(fn=ArgsGeneralWrapper(conditional_predict), inputs=[*input_combo, gr.State(True)], outputs=output_combo)
+        
+        #predict_args = dict(fn=ArgsGeneralWrapper(predict), inputs=[*input_combo, gr.State(True)], outputs=output_combo)
         # 提交按钮、重置按钮
         cancel_handles.append(txt.submit(**predict_args))
         cancel_handles.append(txt2.submit(**predict_args))
@@ -377,6 +427,9 @@ def main():
             outputs = [py_pickle_cookie, cookies, *customize_btns.values(), *predefined_btns.values()], _js=js_code_for_persistent_cookie_init)
         demo.load(None, inputs=[dark_mode], outputs=None, _js="""(dark_mode)=>{apply_cookie_for_checkbox(dark_mode);}""")    # 配置暗色主题或亮色主题
         demo.load(None, inputs=[gr.Textbox(LAYOUT, visible=False)], outputs=None, _js='(LAYOUT)=>{GptAcademicJavaScriptInit(LAYOUT);}')
+
+    url_params = gr.JSON({}, visible=False, label="URL Params")
+demo.load(fn=initialize_from_url_params, inputs=[url_params], outputs=[], _js=get_window_url_params)
 
     # gradio的inbrowser触发不太稳定，回滚代码到原始的浏览器打开函数
     def run_delayed_tasks():
