@@ -72,7 +72,7 @@ def main():
     from themes.theme import load_dynamic_theme, to_cookie_str, from_cookie_str, init_cookie
     #title_html = f"<h1 align=\"center\">GPT 学术优化 {get_current_version()}</h1>{theme_declaration}"
     #title_html = f"<h1 align=\"center\">学术优化GPT （Academic GPT {get_current_version()}）</h1><h2 align=\"center\">本公益站由科研之心（https://ai.linkagi.top）提供，主要为AI科研教学实践使用，更稳定服务请到科研之心官网选择付费服务。</h2>{theme_declaration}"
-    title_html = f"""<h1 align="center">学术优化GPT （Academic GPT {get_current_version()}）</h1><h2 align="center">本公益站由科研之心<a href="https://ai.linkagi.top" target="_blank">https://ai.linkagi.top</a>提供，主要为AI科研教学实践使用，更稳定服务请到科研之心官网选择付费服务。</h2>{theme_declaration}"""
+    title_html = f"<h1 align="center">学术优化GPT （Academic GPT {get_current_version()}）</h1><h2 align="center">本公益站由科研之心<a href="https://ai.linkagi.top" target="_blank">https://ai.linkagi.top</a>提供，主要为AI科研教学实践使用，更稳定服务请到科研之心官网选择付费服务。</h2>{theme_declaration}"
 
     # 对话记录, python 版本建议3.9+（越新越好）
     import logging, uuid
